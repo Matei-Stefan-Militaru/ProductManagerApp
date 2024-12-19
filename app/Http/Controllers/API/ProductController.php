@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
+
+use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-     public function index()
+    public function index()
     {
-        $products = Product::paginate(10);
-        return view('products.index', compact('products'));
+        return response()->json(Product::all());
     }
 
-    public function create()
+    public function show(Product $product)
     {
-        return view('products.create');
+        return response()->json($product);
     }
 
     public function store(Request $request)
@@ -28,13 +29,8 @@ class ProductController extends Controller
             'image_url' => 'nullable|url'
         ]);
 
-        Product::create($validated);
-        return redirect()->route('products.index')->with('success', 'Product created successfully');
-    }
-
-    public function edit(Product $product)
-    {
-        return view('products.edit', compact('product'));
+        $product = Product::create($validated);
+        return response()->json($product, 201);
     }
 
     public function update(Request $request, Product $product)
@@ -49,12 +45,12 @@ class ProductController extends Controller
         ]);
 
         $product->update($validated);
-        return redirect()->route('products.index')->with('success', 'Product updated successfully');
+        return response()->json($product);
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-        return redirect()->route('products.index')->with('success', 'Product deleted successfully');
+        return response()->json(null, 204);
     }
 }
