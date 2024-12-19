@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,17 +19,40 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Rutas para los productos
-Route::resource('products', ProductController::class)->middleware(['auth']);
+// Display all products
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
-// Ruta opcional para mostrar la documentación API
-Route::get('/api/documentation', function () {
-    return view('api.documentation');
-})->name('api.documentation');
+// Show the form to create a new product
+Route::get('/product/create', [ProductController::class, 'create'])->name('products.create');
 
+
+// Store a new product (after submitting the create form)
+Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+
+// Show a specific product
+Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
+
+// Show the form to edit a product
+Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+
+// Update a product (after submitting the edit form)
+Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+
+// Delete a product
+Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+
+// This is the route for the form submission from the welcome page
+Route::post('/product/redirect', [ProductController::class, 'redirect'])->name('product.redirect');
+
+require __DIR__.'/auth.php';

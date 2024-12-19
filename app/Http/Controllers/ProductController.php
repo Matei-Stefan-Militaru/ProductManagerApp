@@ -6,6 +6,33 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+
+    // This method handles the redirect logic based on the selected action
+    public function redirect(Request $request)
+    {
+        $action = $request->input('action');
+        $productId = $request->input('product_id');
+
+        switch ($action) {
+            case 'create':
+                return redirect()->route('products.create');
+            case 'edit':
+                if (!$productId) {
+                    return back()->withErrors(['product_id' => 'Product ID is required for editing']);
+                }
+                return redirect()->route('products.edit', ['product' => $productId]);
+            case 'show':
+                if (!$productId) {
+                    return back()->withErrors(['product_id' => 'Product ID is required for showing']);
+                }
+                return redirect()->route('products.show', ['product' => $productId]);
+            case 'index':
+                return redirect()->route('products.index');
+            default:
+                return redirect('/');
+        }
+    }
+    
      public function index()
     {
         $products = Product::paginate(10);
@@ -57,4 +84,5 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('products.index')->with('success', 'Product deleted successfully');
     }
+        
 }
