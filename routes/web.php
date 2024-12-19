@@ -55,4 +55,3 @@ Route::delete('/products/{product}', [ProductController::class, 'destroy'])->nam
 // This is the route for the form submission from the welcome page
 Route::post('/product/redirect', [ProductController::class, 'redirect'])->name('product.redirect');
 
-require __DIR__.'/auth.php';
